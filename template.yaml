@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  chrome-feedback-api-lambda
+
+  Sample SAM Template for chrome-feedback-api-lambda
+
+Globals:
+  Function:
+    Timeout: 10
+    Tracing: Active
+    LoggingConfig:
+      LogFormat: JSON
+  Api:
+    TracingEnabled: true
+
+Resources:
+  FeedbackFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.handler 
+      Runtime: nodejs20.x  
+      CodeUri: .
+      Events:
+        CreateFeedback:
+          Type: Api
+          Properties:
+            Path: /feedback
+            Method: post
+        GetAllFeedback:
+          Type: Api
+          Properties:
+            Path: /feedback/get-all
+            Method: get
+        SearchFeedback:
+          Type: Api
+          Properties:
+            Path: /feedback/search
+            Method: get
+        GetFeedback:
+          Type: Api
+          Properties:
+            Path: /{extId}
+            Method: get
+
+  ApplicationResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name:
+        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
+      ResourceQuery:
+        Type: CLOUDFORMATION_STACK_1_0
+
+  ApplicationInsightsMonitoring:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName:
+        Ref: ApplicationResourceGroup
+      AutoConfigurationEnabled: 'true'
+
+Outputs:
+  WebEndpoints:
+    Description: REST API
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
