@@ -7,7 +7,7 @@ Description: >
 
 Globals:
   Function:
-    Timeout: 10
+    Timeout: 30
     Tracing: Active
     LoggingConfig:
       LogFormat: JSON
@@ -42,6 +42,9 @@ Resources:
           Properties:
             Path: /{extId}
             Method: get
+        policies:
+          - DynamoDBChromeFeedbackPolicy:
+              TableName: !Ref Feedback
 
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group

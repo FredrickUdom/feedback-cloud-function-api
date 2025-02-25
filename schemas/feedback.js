@@ -63,7 +63,9 @@ const getFeedbackByPredefinedAnswers = async (predefinedAnswers) => {
     console.error('DynamoDB Error:', err);
     throw err;
   }
-};
+}; 
+
+
 
 const getFeedbackByExtensionId = async (extId) => {
   const params = {
